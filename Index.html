@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemX-plore: Portal Modul Interaktif Kimia Kelas X</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #312e81, #4f46e5, #06b6d4);
+            color: var(--white);
+            padding: 45px 20px 55px;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            font-size: 17px;
+            opacity: 0.92;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .stats-bar {
+            max-width: 900px;
+            margin: -25px auto 30px;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            position: relative;
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 35px;
+            background-color: var(--gray-200);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px 20px 50px;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 5px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+        }
+
+        .module-card {
+            background: var(--white);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+
+        .module-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            padding: 20px 20px 15px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 0 20px 20px;
+            flex-grow: 1;
+        }
+
+        .module-number {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .module-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .module-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            background-color: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--primary);
+            transition: background 0.2s;
+        }
+
+        .module-card:hover .card-footer {
+            background-color: #e0e7ff;
+        }
+
+        .action-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .arrow-icon {
+            transition: transform 0.2s;
+        }
+
+        .module-card:hover .arrow-icon {
+            transform: translateX(4px);
+        }
+
+        footer {
+            background-color: var(--gray-800);
+            color: #94a3b8;
+            padding: 25px 20px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        footer strong {
+            color: var(--white);
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 28px; }
+            p.subtitle { font-size: 15px; }
+            .stats-bar { flex-direction: column; gap: 15px; padding: 20px; }
+            .stat-divider { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <span class="logo-badge">🧪 ChemX-plore</span>
+            <h1>Portal Modul Pembelajaran Interaktif</h1>
+            <p class="subtitle">Media Pembelajaran Kimia Kurikulum Merdeka Fase E (Kelas X SMA)</p>
+        </div>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value">5 Modul</div>
+            <div class="stat-label">Materi Utama</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-value">Interaktif</div>
+            <div class="stat-label">Kuis & Visualisasi</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-value">Fase E</div>
+            <div class="stat-label">Kelas X SMA</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Pilih Modul Pembelajaran</h2>
+
+        <div class="modules-grid">
+            
+            <!-- Modul 1 -->
+            <a href="01 kimiahijau.html" class="module-card">
+                <div class="card-header">
+                    <div class="icon-box" style="background-color: #dcfce7; color: #15803d;">🌿</div>
+                    <span class="badge" style="background-color: #dcfce7; color: #15803d;">Modul 01</span>
+                </div>
+                <div class="card-body">
+                    <div class="module-number">Topik 01</div>
+                    <h3 class="module-title">Kimia Hijau</h3>
+                    <p class="module-desc">12 Prinsip Kimia Hijau sebagai solusi pencegahan pencemaran dan pembangunan berkelanjutan masa depan Bumi.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="action-text">Buka Modul Pembelajaran</span>
+                    <span class="arrow-icon">➔</span>
+                </div>
+            </a>
+
+            <!-- Modul 2 -->
+            <a href="02 struktur_atom.html" class="module-card">
+                <div class="card-header">
+                    <div class="icon-box" style="background-color: #dbeafe; color: #1d4ed8;">⚛️</div>
+                    <span class="badge" style="background-color: #dbeafe; color: #1d4ed8;">Modul 02</span>
+                </div>
+                <div class="card-body">
+                    <div class="module-number">Topik 02</div>
+                    <h3 class="module-title">Struktur Atom</h3>
+                    <p class="module-desc">Perkembangan model atom dari Dalton hingga Mekanika Kuantum, partikel subatom, serta konsep energi foton.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="action-text">Buka Modul Pembelajaran</span>
+                    <span class="arrow-icon">➔</span>
+                </div>
+            </a>
+
+            <!-- Modul 3 -->
+            <a href="03 6konfigurasi_elektron.html" class="module-card">
+                <div class="card-header">
+                    <div class="icon-box" style="background-color: #e0e7ff; color: #4338ca;">⚡</div>
+                    <span class="badge" style="background-color: #e0e7ff; color: #4338ca;">Modul 03</span>
+                </div>
+                <div class="card-body">
+                    <div class="module-number">Topik 03</div>
+                    <h3 class="module-title">Konfigurasi Elektron</h3>
+                    <p class="module-desc">Penataan elektron pada kulit (Bohr) & subkulit (Aufbau, Pauli, Hund), serta konfigurasi kation dan anion.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="action-text">Buka Modul Pembelajaran</span>
+                    <span class="arrow-icon">➔</span>
+                </div>
+            </a>
+
+            <!-- Modul 4 -->
+            <a href="04 ikatan_kimia.html" class="module-card">
+                <div class="card-header">
+                    <div class="icon-box" style="background-color: #ccfbf1; color: #0f766e;">🔗</div>
+                    <span class="badge" style="background-color: #ccfbf1; color: #0f766e;">Modul 04</span>
+                </div>
+                <div class="card-body">
+                    <div class="module-number">Topik 04</div>
+                    <h3 class="module-title">Ikatan Kimia & Ikatan Logam</h3>
+                    <p class="module-desc">Kestabilan oktet/duplet, pembentukan ikatan ion, kovalen (polar/non-polar), serta teori lautan elektron pada logam.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="action-text">Buka Modul Pembelajaran</span>
+                    <span class="arrow-icon">➔</span>
+                </div>
+            </a>
+
+            <!-- Modul 5 -->
+            <a href="05 reaksi_kimia.html" class="module-card">
+                <div class="card-header">
+                    <div class="icon-box" style="background-color: #ecfdf5; color: #047857;">🔥</div>
+                    <span class="badge" style="background-color: #ecfdf5; color: #047857;">Modul 05</span>
+                </div>
+                <div class="card-body">
+                    <div class="module-number">Topik 05</div>
+                    <h3 class="module-title">Reaksi Kimia Sehari-hari</h3>
+                    <p class="module-desc">Ciri-ciri reaksi kimia, diagram fotosintesis & respirasi, aplikasi kehidupan nyata, serta studi kasus stoikiometri.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="action-text">Buka Modul Pembelajaran</span>
+                    <span class="arrow-icon">➔</span>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>ChemX-plore</strong> — Modul Interaktif Kimia SMA Kelas X / Fase E</p>
+        <p style="font-size: 12px; margin-top: 5px; opacity: 0.7;">Disusun untuk mempermudah pembelajaran mandiri & eksplorasi ilmu kimia secara interaktif.</p>
+    </footer>
+
+</body>
+</html>

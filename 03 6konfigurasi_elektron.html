@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Konfigurasi Elektron Atom dan Ion</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        h1 { margin: 0; font-size: 26px; }
+        p.subtitle { margin: 6px 0 0 0; font-size: 14px; opacity: 0.9; }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        /* Navigasi Tab */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            text-align: center;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+        }
+
+        /* Desain Kartu Materi */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-4px); }
+        .card h3 { margin-top: 0; color: var(--primary); font-size: 17px; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
+        .card p, .card ul { font-size: 14.5px; }
+        .card ul { padding-left: 18px; margin: 8px 0; }
+        .card li { margin-bottom: 6px; }
+
+        .formula-box {
+            background-color: #e0e7ff;
+            border-left: 4px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* Desain Kuis */
+        .quiz-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .question-text { font-size: 17px; font-weight: bold; margin-bottom: 20px; color: var(--dark); }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--light);
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14.5px;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .option-btn:hover { background: #e2e8f0; border-color: var(--secondary); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #14532d !important; font-weight: bold; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #7f1d1d !important; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        .btn-next:hover { background: var(--primary-dark); }
+
+        .score-board {
+            text-align: center;
+            padding: 30px;
+        }
+        .score-board h2 { font-size: 40px; color: var(--secondary); margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚡ ChemX-plore: Konfigurasi Elektron</h1>
+        <p class="subtitle">Materi Kimia Kelas X SMA — Konfigurasi Bohr, Kuantum, Kation & Anion</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigasi Tab -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('materi', event)">📖 Rangkuman Materi</button>
+            <button class="tab-btn" onclick="switchTab('kuis', event)">📝 Kuis Interaktif (5 Soal)</button>
+        </div>
+
+        <!-- BAGIAN MATERI -->
+        <div id="materi" class="section active">
+            <div class="section-header">
+                <h2>1. Konsep Dasar & Model Bohr</h2>
+                <p>Pengisian elektron berdasarkan tingkat energi kulit atom (K, L, M, N...)</p>
+            </div>
+            
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Pengertian Konfigurasi Elektron</h3>
+                    <p>Konfigurasi elektron adalah susunan atau persebaran elektron pada kulit atom atau subkulitnya. Konfigurasi ini menentukan sifat kimia serta letak unsur pada tabel periodik.</p>
+                </div>
+                <div class="card">
+                    <h3>Model Atom Bohr (Kulit Atom)</h3>
+                    <p>Elektron mengisi kulit K (n=1), L (n=2), M (n=3), N (n=4).</p>
+                    <div class="formula-box">Elektron Maksimum = 2n<sup>2</sup></div>
+                    <ul>
+                        <li><b>Kulit K:</b> Maksimal 2 elektron</li>
+                        <li><b>Kulit L:</b> Maksimal 8 elektron</li>
+                        <li><b>Kulit M:</b> Maksimal 18 elektron</li>
+                        <li><b>Kulit N:</b> Maksimal 32 elektron</li>
+                    </ul>
+                    <p><b>Aturan Tambahan:</b> Jumlah elektron valensi (kulit terluar) <i>tidak boleh lebih dari 8 elektron</i>.</p>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>2. Mekanika Kuantum & Subkulit</h2>
+                <p>Pengisian elektron berdasarkan orbital subkulit (s, p, d, f)</p>
+            </div>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Kapasitas Subkulit</h3>
+                    <ul>
+                        <li><b>Subkulit s:</b> Maksimal 2 elektron</li>
+                        <li><b>Subkulit p:</b> Maksimal 6 elektron</li>
+                        <li><b>Subkulit d:</b> Maksimal 10 elektron</li>
+                        <li><b>Subkulit f:</b> Maksimal 14 elektron</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Aturan Pengisian Subkulit</h3>
+                    <ul>
+                        <li><b>Prinsip Aufbau:</b> Pengisian dari tingkat energi terendah ke tinggi:
+                            <br><code>1s → 2s → 2p → 3s → 3p → 4s → 3d → 4p...</code>
+                        </li>
+                        <li><b>Larangan Pauli:</b> Tidak ada 2 elektron dengan 4 bilangan kuantum sama. Setiap orbital menampung maks 2 elektron berlawanan spin (↑↓).</li>
+                        <li><b>Kaidah Hund:</b> Elektron mengisi orbital setara secara mandiri terlebih dahulu sebelum berpasangan.</li>
+                    </ul>
+                </div>
+                <div class="card" style="grid-column: span 1 / -1;">
+                    <h3>Pengecualian Kestabilan Subkulit d</h3>
+                    <p>Subkulit d mencapai stabilitas tinggi saat terisi <b>setengah penuh (d<sup>5</sup>)</b> atau <b>penuh (d<sup>10</sup>)</b>.</p>
+                    <ul>
+                        <li><sub>24</sub>Cr = <code>1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup> 3p<sup>6</sup> 4s<sup>1</sup> 3d<sup>5</sup></code> <i>(Bukan 4s<sup>2</sup> 3d<sup>4</sup>)</i></li>
+                        <li><sub>29</sub>Cu = <code>1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup> 3p<sup>6</sup> 4s<sup>1</sup> 3d<sup>10</sup></code> <i>(Bukan 4s<sup>2</sup> 3d<sup>9</sup>)</i></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>3. Konfigurasi Elektron Ion</h2>
+                <p>Pembentukan Kation (Lepas Elektron) & Anion (Tangkap Elektron)</p>
+            </div>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Kation (Ion Positif)</h3>
+                    <p>Terbentuk saat atom <b>melepaskan elektron</b>. Elektron selalu dilepaskan dari <b>kulit terluar (n terbesar)</b> terlebih dahulu.</p>
+                    <p><b>Contoh Logam Transisi:</b></p>
+                    <p><sub>26</sub>Fe = [Ar] 4s<sup>2</sup> 3d<sup>6</sup></p>
+                    <p>→ <sub>26</sub>Fe<sup>3+</sup> = <b>[Ar] 3d<sup>5</sup></b> <i>(2 e<sup>-</sup> dilepas dari 4s, 1 e<sup>-</sup> dari 3d)</i></p>
+                </div>
+                <div class="card">
+                    <h3>Anion (Ion Negatif)</h3>
+                    <p>Terbentuk saat atom <b>menerima/menangkap elektron</b>. Elektron ditambahkan pada subkulit terluar yang belum penuh.</p>
+                    <p><b>Contoh:</b></p>
+                    <p><sub>8</sub>O = 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>4</sup></p>
+                    <p>→ <sub>8</sub>O<sup>2-</sup> = <b>1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup></b> <i>(Menangkap 2 e<sup>-</sup> pada 2p)</i></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BAGIAN KUIS -->
+        <div id="kuis" class="section">
+            <div class="quiz-container" id="quiz-box">
+                <div id="progress" style="margin-bottom: 12px; font-weight: bold; color: var(--primary);">Soal 1 dari 5</div>
+                <div class="question-text" id="question">Memuat soal...</div>
+                
+                <div id="options-container"></div>
+
+                <div id="feedback" class="feedback-box"></div>
+                <button id="btn-next" class="btn-next" onclick="nextQuestion()">Soal Selanjutnya ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.target.classList.add('active');
+        }
+
+        const quizData = [
+            {
+                question: "1. Konfigurasi elektron berdasarkan teori Bohr untuk atom ₂₀Ca dan ion ₂₀Ca²⁺ berturut-turut adalah...",
+                options: {
+                    A: "2, 8, 10 dan 2, 8, 8",
+                    B: "2, 8, 8, 2 dan 2, 8, 8",
+                    C: "2, 8, 8, 2 dan 2, 8, 10",
+                    D: "2, 8, 9, 1 dan 2, 8, 8"
+                },
+                answer: "B",
+                explanation: "Atom ₂₀Ca memiliki 20 elektron dengan konfigurasi Bohr: 2, 8, 8, 2. Saat membentuk ion Ca²⁺, atom melepaskan 2 elektron valensi dari kulit N sehingga tersisa 18 elektron dengan konfigurasi 2, 8, 8."
+            },
+            {
+                question: "2. Konfigurasi elektron subkulit dan jumlah elektron valensi dari atom klorin (₁₇Cl) adalah...",
+                options: {
+                    A: "1s² 2s² 2p⁶ 3s² 3p⁵ dan 5 elektron valensi",
+                    B: "1s² 2s² 2p⁶ 3s² 3p⁵ dan 7 elektron valensi",
+                    C: "1s² 2s² 2p⁶ 3s¹ 3p⁶ dan 7 elektron valensi",
+                    D: "1s² 2s² 2p⁶ 3s² 3p⁶ dan 8 elektron valensi"
+                },
+                answer: "B",
+                explanation: "Konfigurasi Aufbau untuk ₁₇Cl = 1s² 2s² 2p⁶ 3s² 3p⁵. Kulit terluarnya adalah n=3 (3s² 3p⁵), sehingga jumlah elektron valensinya = 2 + 5 = 7 elektron."
+            },
+            {
+                question: "3. Konfigurasi elektron untuk ion logam transisi ₂₆Fe³⁺ jika dipersingkat menggunakan gas mulia [₁₈Ar] adalah...",
+                options: {
+                    A: "[Ar] 4s² 3d³",
+                    B: "[Ar] 4s¹ 3d⁴",
+                    C: "[Ar] 3d⁵",
+                    D: "[Ar] 4s² 3d⁵"
+                },
+                answer: "C",
+                explanation: "Atom netral ₂₆Fe = [Ar] 4s² 3d⁶. Saat melepaskan 3 elektron (Fe³⁺), elektron dilepas dari kulit terluar (4s) sebanyak 2 elektron terlebih dahulu, lalu 1 elektron dari 3d. Konfigurasinya menjadi [Ar] 3d⁵."
+            },
+            {
+                question: "4. Konfigurasi elektron atom Chromium (₂₄Cr) ditulis sebagai [Ar] 4s¹ 3d⁵ dan bukan [Ar] 4s² 3d⁴. Hal ini disebabkan oleh...",
+                options: {
+                    A: "Subkulit d lebih stabil dalam keadaan terisi setengah penuh (d⁵)",
+                    B: "Subkulit s selalu terisi 1 elektron sebelum subkulit d",
+                    C: "Elektron pada subkulit 4s berpindah karena energi orbital 3d lebih rendah",
+                    D: "Aturan Aufbau tidak berlaku untuk atom bermuatan netral"
+                },
+                answer: "A",
+                explanation: "Subkulit d memiliki kestabilan ekstra saat terisi penuh (d¹⁰) atau setengah penuh (d⁵) karena simetri kerapatan elektron yang optimal dan energi interaksi yang lebih rendah."
+            },
+            {
+                question: "5. Suatu ion X²⁻ memiliki konfigurasi elektron 1s² 2s² 2p⁶ 3s² 3p⁶. Nomor atom dan konfigurasi elektron atom netral X adalah...",
+                options: {
+                    A: "Nomor atom 18, konfigurasi 1s² 2s² 2p⁶ 3s² 3p⁶",
+                    B: "Nomor atom 20, konfigurasi 1s² 2s² 2p⁶ 3s² 3p⁶ 4s²",
+                    C: "Nomor atom 16, konfigurasi 1s² 2s² 2p⁶ 3s² 3p⁴",
+                    D: "Nomor atom 16, konfigurasi 1s² 2s² 2p⁶ 3s² 3p⁶"
+                },
+                answer: "C",
+                explanation: "Ion X²⁻ menangkap 2 elektron sehingga totalnya 18 elektron. Atom netral X memiliki 18 - 2 = 16 elektron (nomor atom 16). Konfigurasi atom netral ₁₆X = 1s² 2s² 2p⁶ 3s² 3p⁴."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQ];
+            document.getElementById('progress').innerText = `Soal ${currentQ + 1} dari ${quizData.length}`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = "";
+            
+            for(const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${key}. ${value}`;
+                btn.onclick = () => checkAnswer(key, btn);
+                optionsBox.appendChild(btn);
+            }
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedKey, btnClicked) {
+            const q = quizData[currentQ];
+            const feedbackBox = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selectedKey === q.answer) {
+                btnClicked.classList.add('correct');
+                feedbackBox.style.background = '#dcfce7';
+                feedbackBox.style.color = '#14532d';
+                feedbackBox.style.border = '1px solid #86efac';
+                feedbackBox.innerHTML = `<strong>✅ Tepat Sekali!</strong><br>Pembahasan: ${q.explanation}`;
+                score += 100 / quizData.length;
+            } else {
+                btnClicked.classList.add('wrong');
+                feedbackBox.style.background = '#fee2e2';
+                feedbackBox.style.color = '#7f1d1d';
+                feedbackBox.style.border = '1px solid #fca5a5';
+                feedbackBox.innerHTML = `<strong>❌ Jawaban Kurang Tepat. Jawaban Benar: ${q.answer}</strong><br>Pembahasan: ${q.explanation}`;
+                
+                allBtns.forEach(b => {
+                    if(b.innerText.startsWith(q.answer)) b.classList.add('correct');
+                });
+            }
+
+            feedbackBox.style.display = 'block';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const quizBox = document.getElementById('quiz-box');
+            const finalScore = Math.round(score);
+            let message = finalScore >= 80 ? "Luar Biasa! Kamu menguasai Konfigurasi Elektron dengan sangat baik! ⚡" : "Tetap Semangat! Pelajari lagi rangkuman materi di atas ya. 📚";
+            
+            quizBox.innerHTML = `
+                <div class="score-board">
+                    <h3>Kuis Selesai!</h3>
+                    <p>${message}</p>
+                    <h2>Nilai Kamu: ${finalScore} / 100</h2>
+                    <button class="tab-btn" style="margin-top:20px" onclick="location.reload()">Ulangi Kuis</button>
+                </div>
+            `;
+        }
+
+        // Jalankan kuis saat awal dimuat
+        loadQuestion();
+    </script>
+
+<a href="index.html" class="module-card">
+   <div class="card-body">
+      <h3 class="module-title">Kembali</h3>
+   </div>
+</a>
+</body>
+</html>

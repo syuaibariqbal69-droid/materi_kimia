@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Reaksi Kimia Sehari-hari</title>
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --secondary: #0284c7;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        h1 { margin: 0; font-size: 26px; }
+        p.subtitle { margin: 6px 0 0 0; font-size: 14px; opacity: 0.9; }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        /* Navigasi Tab */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14.5px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            text-align: center;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+        }
+
+        /* Grid Kartu Materi */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-4px); }
+        .card h3 { margin-top: 0; color: var(--primary); font-size: 17px; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
+        .card p, .card ul { font-size: 14.5px; }
+        .card ul { padding-left: 18px; margin: 8px 0; }
+        .card li { margin-bottom: 6px; }
+
+        .formula-box {
+            background-color: #ecfdf5;
+            border-left: 4px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Container Diagram SVG */
+        .diagram-container {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Penyelesaian Soal Langkah-demi-Langkah */
+        .step-box {
+            background: var(--white);
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: var(--primary-dark);
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-badge {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Kuis */
+        .quiz-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .question-text { font-size: 17px; font-weight: bold; margin-bottom: 20px; color: var(--dark); }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--light);
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14.5px;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .option-btn:hover { background: #e2e8f0; border-color: var(--secondary); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #14532d !important; font-weight: bold; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #7f1d1d !important; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        .btn-next:hover { background: var(--primary-dark); }
+
+        .score-board {
+            text-align: center;
+            padding: 30px;
+        }
+        .score-board h2 { font-size: 40px; color: var(--secondary); margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🔥 ChemX-plore: Reaksi Kimia Kehidupan Sehari-hari</h1>
+        <p class="subtitle">Materi Kimia Kelas X SMA — Konsep, Ciri-ciri, Aplikasi Real-Life, & Stoikiometri</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigasi Tab -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('materi', event)">📖 Rangkuman & Diagram</button>
+            <button class="tab-btn" onclick="switchTab('soal', event)">🧩 Latihan Soal Komprehensif</button>
+            <button class="tab-btn" onclick="switchTab('kuis', event)">📝 Kuis Interaktif (2 Soal)</button>
+        </div>
+
+        <!-- BAGIAN MATERI & DIAGRAM -->
+        <div id="materi" class="section active">
+            <div class="section-header">
+                <h2>1. Konsep & Ciri-Ciri Reaksi Kimia</h2>
+                <p>Reaksi kimia terjadi saat satu atau lebih zat (reaktan) berubah menjadi zat baru (produk) dengan sifat berbeda.</p>
+            </div>
+
+            <!-- Diagram 1: SVG Ciri-Ciri Reaksi Kimia -->
+            <div class="diagram-container">
+                <h3 style="color: var(--primary-dark); margin-top:0;">Diagram 1: 4 Ciri Utama Terjadinya Reaksi Kimia</h3>
+                <svg viewBox="0 0 700 200" width="100%">
+                    <!-- Kotak 1: Perubahan Warna -->
+                    <rect x="20" y="40" width="140" height="120" rx="10" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="80" text-anchor="middle" font-size="28">🎨</text>
+                    <text x="90" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#7f1d1d">Perubahan Warna</text>
+                    <text x="90" y="130" text-anchor="middle" font-size="11" fill="#991b1b">Contoh: Perkaratan Besi</text>
+
+                    <!-- Kotak 2: Pembentukan Gas -->
+                    <rect x="180" y="40" width="140" height="120" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                    <text x="250" y="80" text-anchor="middle" font-size="28">🫧</text>
+                    <text x="250" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#0c4a6e">Pembentukan Gas</text>
+                    <text x="250" y="130" text-anchor="middle" font-size="11" fill="#0369a1">Contoh: Soda & Cuka</text>
+
+                    <!-- Kotak 3: Perubahan Suhu -->
+                    <rect x="340" y="40" width="140" height="120" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="410" y="80" text-anchor="middle" font-size="28">🌡️</text>
+                    <text x="410" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#78350f">Perubahan Suhu</text>
+                    <text x="410" y="130" text-anchor="middle" font-size="11" fill="#b45309">Eksoterm & Endoterm</text>
+
+                    <!-- Kotak 4: Endapan -->
+                    <rect x="500" y="40" width="140" height="120" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                    <text x="570" y="80" text-anchor="middle" font-size="28">🧪</text>
+                    <text x="570" y="110" text-anchor="middle" font-weight="bold" font-size="13" fill="#14532d">Pembentukan Endapan</text>
+                    <text x="570" y="130" text-anchor="middle" font-size="11" fill="#15803d">Contoh: Kerak Air Sadah</text>
+                </svg>
+            </div>
+
+            <div class="section-header">
+                <h2>2. Reaksi Kimia Terdekat dengan Kehidupan</h2>
+            </div>
+
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>1. Pembakaran Gas Elpiji (LPG)</h3>
+                    <p>Reaksi pembakaran metana/propana dengan oksigen yang menghasilkan panas untuk memasak.</p>
+                    <div class="formula-box">CH<sub>4</sub>(g) + 2O<sub>2</sub>(g) → CO<sub>2</sub>(g) + 2H<sub>2</sub>O(g)</div>
+                </div>
+
+                <div class="card">
+                    <h3>2. Netralisasi Asam Lambung (Obat Maag)</h3>
+                    <p>Antasida yang bersifat basa (Magnesium Hidroksida) menetralkan kelebihan asam lambung (HCl).</p>
+                    <div class="formula-box">Mg(OH)<sub>2</sub>(s) + 2HCl(aq) → MgCl<sub>2</sub>(aq) + 2H<sub>2</sub>O(l)</div>
+                </div>
+
+                <div class="card">
+                    <h3>3. Perkaratan Besi (Korosi)</h3>
+                    <p>Besi bereaksi dengan oksigen dan uap air di udara membentuk karat merah kecokelatan.</p>
+                    <div class="formula-box">4Fe(s) + 3O<sub>2</sub>(g) + 2xH<sub>2</sub>O(l) → 2Fe<sub>2</sub>O<sub>3</sub>·xH<sub>2</sub>O(s)</div>
+                </div>
+            </div>
+
+            <!-- Diagram 2: Siklus Daur Karbon (Fotosintesis vs Respirasi) -->
+            <div class="diagram-container">
+                <h3 style="color: var(--primary-dark); margin-top:0;">Diagram 2: Daur Hubungan Fotosintesis & Respirasi Seluler</h3>
+                <svg viewBox="0 0 650 200" width="100%">
+                    <rect x="30" y="50" width="220" height="100" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                    <text x="140" y="80" text-anchor="middle" font-weight="bold" font-size="14" fill="#14532d">🌱 FOTOSINTESIS</text>
+                    <text x="140" y="105" text-anchor="middle" font-size="11" fill="#166534">6CO₂ + 6H₂O + Sinar Matahari</text>
+                    <text x="140" y="125" text-anchor="middle" font-size="11" fill="#166534">→ C₆H₁₂O₆ + 6O₂</text>
+
+                    <!-- Panah Atas -->
+                    <path d="M 260 75 Q 325 40 380 75" fill="none" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="325" y="50" text-anchor="middle" font-size="11" font-weight="bold" fill="#0284c7">Glukosa & Oksigen (O₂)</text>
+
+                    <!-- Panah Bawah -->
+                    <path d="M 390 125 Q 325 160 270 125" fill="none" stroke="#059669" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="325" y="170" text-anchor="middle" font-size="11" font-weight="bold" fill="#059669">Karbondioksida (CO₂) & Air (H₂O)</text>
+
+                    <rect x="400" y="50" width="220" height="100" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="510" y="80" text-anchor="middle" font-weight="bold" font-size="14" fill="#78350f">🫁 RESPIRASI MANUSIA</text>
+                    <text x="510" y="105" text-anchor="middle" font-size="11" fill="#92400e">C₆H₁₂O₆ + 6O₂</text>
+                    <text x="510" y="125" text-anchor="middle" font-size="11" fill="#92400e">→ 6CO₂ + 6H₂O + ENERGI</text>
+
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
+        <!-- BAGIAN LATIHAN SOAL KOMPREHENSIF -->
+        <div id="soal" class="section">
+            <div class="section-header">
+                <h2>Latihan Penyelesaian Soal Komprehensif</h2>
+                <p>Panduan studi kasus perhitungan kimia (stoikiometri) dalam kehidupan nyata.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-badge">1</span> Studi Kasus 1: Perhitungan Dosis Antasida (Netralisasi Asam Lambung)
+                </div>
+                <p><b>Soal:</b> Seseorang mengalami sakit maag akibat kelebihan asam lambung (HCl). Jika di dalam lambung terdapat 0,02 mol HCl, berapa gram Magnesium Hidroksida, Mg(OH)<sub>2</sub>, yang terkandung dalam obat maag yang dibutuhkan agar asam lambung tersebut habis terhitung tepat menetralkan? (Ar Mg = 24, O = 16, H = 1)</p>
+                <hr style="border:0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+                <p><b>Penyelesaian Langkah-demi-Langkah:</b></p>
+                <ul>
+                    <li><b>Langkah 1: Tuliskan & Setarakan Persamaan Reaksi</b>
+                        <div class="formula-box">Mg(OH)<sub>2</sub>(s) + 2HCl(aq) → MgCl<sub>2</sub>(aq) + 2H<sub>2</sub>O(l)</div>
+                        <i>Dari koefisien reaksi: 1 mol Mg(OH)<sub>2</sub> bereaksi dengan 2 mol HCl.</i>
+                    </li>
+                    <li><b>Langkah 2: Hitung Mol Mg(OH)<sub>2</sub> yang Dibutuhkan</b>
+                        <br>Mol Mg(OH)<sub>2</sub> = (Koefisien Mg(OH)<sub>2</sub> / Koefisien HCl) × Mol HCl
+                        <br>Mol Mg(OH)<sub>2</sub> = (1 / 2) × 0,02 mol = <b>0,01 mol</b>
+                    </li>
+                    <li><b>Langkah 3: Hitung Massa Molar (Mr) Mg(OH)<sub>2</sub></b>
+                        <br>Mr Mg(OH)<sub>2</sub> = 24 + 2(16 + 1) = 24 + 34 = <b>58 g/mol</b>
+                    </li>
+                    <li><b>Langkah 4: Hitung Massa Mg(OH)<sub>2</sub> yang Diperlukan</b>
+                        <br>Massa = Mol × Mr = 0,01 mol × 58 g/mol = <b>0,58 gram</b>
+                    </li>
+                </ul>
+                <div style="background:#dcfce7; color:#14532d; padding:10px 15px; border-radius:6px; font-weight:bold; text-align:center;">
+                    Kesimpulan: Dibutuhkan minimal 0,58 gram Mg(OH)₂ untuk menetralkan asam lambung tersebut.
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-badge">2</span> Studi Kasus 2: Efisiensi Pembakaran Kompor Gas Elpiji
+                </div>
+                <p><b>Soal:</b> Gas metana (CH<sub>4</sub>) dalam kompor dapur dibakar sempurna menghasilkan gas karbon dioksida dan uap air. Jika 32 gram gas metana dibakar sempurna (Ar C = 12, H = 1, O = 16), berapakah volume gas CO<sub>2</sub> yang dihasilkan pada kondisi standar (STP, 1 mol = 22,4 L)?</p>
+                <hr style="border:0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+                <p><b>Penyelesaian Langkah-demi-Langkah:</b></p>
+                <ul>
+                    <li><b>Langkah 1: Setarakan Reaksi Pembakaran</b>
+                        <div class="formula-box">CH<sub>4</sub>(g) + 2O<sub>2</sub>(g) → CO<sub>2</sub>(g) + 2H<sub>2</sub>O(g)</div>
+                    </li>
+                    <li><b>Langkah 2: Hitung Mol CH<sub>4</sub> yang Dibakar</b>
+                        <br>Mr CH<sub>4</sub> = 12 + 4(1) = 16 g/mol
+                        <br>Mol CH<sub>4</sub> = 32 gram / 16 g/mol = <b>2 mol</b>
+                    </li>
+                    <li><b>Langkah 3: Tentukan Mol Gas CO<sub>2</sub> Produk</b>
+                        <br>Perbandingan koefisien CH<sub>4</sub> : CO<sub>2</sub> = 1 : 1
+                        <br>Maka, Mol CO<sub>2</sub> = <b>2 mol</b>
+                    </li>
+                    <li><b>Langkah 4: Hitung Volume CO<sub>2</sub> pada Kondisi STP</b>
+                        <br>Volume CO<sub>2</sub> = Mol × 22,4 L/mol = 2 mol × 22,4 L = <b>44,8 Liter</b>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BAGIAN KUIS INTERAKTIF (2 SOAL) -->
+        <div id="kuis" class="section">
+            <div class="quiz-container" id="quiz-box">
+                <div id="progress" style="margin-bottom: 12px; font-weight: bold; color: var(--primary);">Soal 1 dari 2</div>
+                <div class="question-text" id="question">Memuat soal...</div>
+                
+                <div id="options-container"></div>
+
+                <div id="feedback" class="feedback-box"></div>
+                <button id="btn-next" class="btn-next" onclick="nextQuestion()">Soal Selanjutnya ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.target.classList.add('active');
+        }
+
+        const quizData = [
+            {
+                question: "1. Saat membuat kue, soda kue (NaHCO₃) ditambahkan ke dalam adonan dan dipanaskan sehingga terurai menghasilkan gas yang membuat kue mengembang. Koefisien reaksi penyetaraan yang benar untuk reaksi penguraian NaHCO₃(s) → Na₂CO₃(s) + H₂O(g) + CO₂(g) berturut-turut adalah...",
+                options: {
+                    A: "1, 1, 1, 1",
+                    B: "2, 1, 1, 1",
+                    C: "2, 2, 1, 1",
+                    D: "1, 2, 1, 2"
+                },
+                answer: "B",
+                explanation: "Reaksi penyetaraan penguraian soda kue adalah: 2 NaHCO₃(s) → 1 Na₂CO₃(s) + 1 H₂O(g) + 1 CO₂(g). Atom Na di kiri = 2, kanan = 2; atom H di kiri = 2, kanan = 2; atom C di kiri = 2, kanan = 2; atom O di kiri = 6, kanan = 3+1+2 = 6."
+            },
+            {
+                question: "2. Respirasi seluler pada tubuh manusia melibatkan pembakaran glukosa oleh oksigen: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O. Jika dalam satu kali siklus napas sel tubuh mengonsumsi 0,5 mol glukosa, berapakah mol gas karbon dioksida (CO₂) yang dihembuskan keluar?",
+                options: {
+                    A: "1,0 mol",
+                    B: "0,5 mol",
+                    C: "3,0 mol",
+                    D: "6,0 mol"
+                },
+                answer: "C",
+                explanation: "Berdasarkan koefisien reaksi setara: 1 mol C₆H₁₂O₆ menghasilkan 6 mol CO₂ (perbandingan 1 : 6). Jika glukosa yang bereaksi adalah 0,5 mol, maka CO₂ yang dihasilkan = 6 × 0,5 mol = 3,0 mol."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQ];
+            document.getElementById('progress').innerText = `Soal ${currentQ + 1} dari ${quizData.length}`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = "";
+            
+            for(const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${key}. ${value}`;
+                btn.onclick = () => checkAnswer(key, btn);
+                optionsBox.appendChild(btn);
+            }
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedKey, btnClicked) {
+            const q = quizData[currentQ];
+            const feedbackBox = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selectedKey === q.answer) {
+                btnClicked.classList.add('correct');
+                feedbackBox.style.background = '#dcfce7';
+                feedbackBox.style.color = '#14532d';
+                feedbackBox.style.border = '1px solid #86efac';
+                feedbackBox.innerHTML = `<strong>✅ Tepat Sekali!</strong><br>Pembahasan: ${q.explanation}`;
+                score += 100 / quizData.length;
+            } else {
+                btnClicked.classList.add('wrong');
+                feedbackBox.style.background = '#fee2e2';
+                feedbackBox.style.color = '#7f1d1d';
+                feedbackBox.style.border = '1px solid #fca5a5';
+                feedbackBox.innerHTML = `<strong>❌ Jawaban Kurang Tepat. Jawaban Benar: ${q.answer}</strong><br>Pembahasan: ${q.explanation}`;
+                
+                allBtns.forEach(b => {
+                    if(b.innerText.startsWith(q.answer)) b.classList.add('correct');
+                });
+            }
+
+            feedbackBox.style.display = 'block';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const quizBox = document.getElementById('quiz-box');
+            const finalScore = Math.round(score);
+            let message = finalScore >= 100 ? "Sempurna! Kamu memahami konsep Reaksi Kimia dengan sangat baik! 🔥" : "Tetap Semangat! Pelajari kembali rangkuman dan studi kasus di atas ya. 📚";
+            
+            quizBox.innerHTML = `
+                <div class="score-board">
+                    <h3>Kuis Selesai!</h3>
+                    <p>${message}</p>
+                    <h2>Nilai Kamu: ${finalScore} / 100</h2>
+                    <button class="tab-btn" style="margin-top:20px" onclick="location.reload()">Ulangi Kuis</button>
+                </div>
+            `;
+        }
+
+        // Jalankan kuis saat awal dimuat
+        loadQuestion();
+    </script>
+
+<a href="index.html" class="module-card">
+   <div class="card-body">
+      <h3 class="module-title">Kembali</h3>
+   </div>
+</a>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Struktur Atom</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --secondary: #0284c7;
+            --accent: #38bdf8;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        h1 { margin: 0; font-size: 26px; }
+        p.subtitle { margin: 6px 0 0 0; font-size: 14px; opacity: 0.9; }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        /* Navigasi Tab */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        /* Desain Materi (Grid Cards) */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-4px); }
+        .card h3 { margin-top: 0; color: var(--primary); font-size: 17px; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
+        .card p, .card ul { font-size: 14.5px; }
+        .card ul { padding-left: 18px; margin: 8px 0; }
+        .card li { margin-bottom: 6px; }
+
+        /* Desain Kuis */
+        .quiz-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .question-text { font-size: 17px; font-weight: bold; margin-bottom: 20px; color: var(--dark); }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--light);
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14.5px;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .option-btn:hover { background: #e2e8f0; border-color: var(--secondary); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #14532d !important; font-weight: bold; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #7f1d1d !important; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        .btn-next:hover { background: var(--primary-dark); }
+
+        .score-board {
+            text-align: center;
+            padding: 30px;
+        }
+        .score-board h2 { font-size: 40px; color: var(--secondary); margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚛️ ChemX-plore: Struktur Atom</h1>
+        <p class="subtitle">Materi Kimia Kelas X SMA — Sejarah Model Atom hingga Kuantum</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('materi', event)">📖 Rangkuman Materi</button>
+            <button class="tab-btn" onclick="switchTab('kuis', event)">📝 Kuis Interaktif (6 Soal)</button>
+        </div>
+
+        <div id="materi" class="section active">
+            <div class="section-header">
+                <h2>1. Konsep Dasar Elemen dan Atom</h2>
+                <p>Pemahaman dasar mengenai penyusun utama materi di alam semesta.</p>
+            </div>
+            
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Teori Elemen (Unsur)</h3>
+                    <p><b>Elemen/Unsur</b> adalah zat murni paling sederhana yang tidak dapat diuraikan lagi menjadi zat lain melalui reaksi kimia biasa. Contoh: Oksigen (O), Emas (Au), Hidrogen (H).</p>
+                </div>
+                <div class="card">
+                    <h3>Konsep Dasar Atom</h3>
+                    <p><b>Atom</b> (berasal dari kata Yunani <i>atomos</i> = tidak dapat dibagi) adalah unit terkecil dari suatu unsur yang masih mempertahankan sifat-sifat kimia unsur tersebut.</p>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>2. Perkembangan Model Atom</h2>
+            </div>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>1. John Dalton (1803)</h3>
+                    <p><b>Bola Pejal:</b> Atom adalah bola pejal bermuatan positif yang tidak dapat dibagi, diciptakan, atau dimusnahkan. Atom dari unsur yang sama identik satu sama lain.</p>
+                </div>
+                <div class="card">
+                    <h3>2. J.J. Thomson (1897)</h3>
+                    <p><b>Roti Kismis:</b> Atom berbentuk bola bermuatan positif yang di dalamnya tersebar elektron bermuatan negatif secara merata, bagaikan kismis di dalam roti.</p>
+                </div>
+                <div class="card">
+                    <h3>3. Ernest Rutherford (1911)</h3>
+                    <p><b>Model Tata Surya:</b> Atom terdiri dari inti atom bermuatan positif yang terpusat di tengah, dikelilingi oleh elektron bermuatan negatif pada lintasannya.</p>
+                </div>
+                <div class="card">
+                    <h3>4. Niels Bohr (1913)</h3>
+                    <p><b>Model Orbit Stasioner:</b> Elektron mengelilingi inti atom pada lintasan/kulit tertentu dengan tingkat energi tetap tanpa memancarkan energi secara konstan.</p>
+                </div>
+                <div class="card" style="grid-column: span 1 / -1;">
+                    <h3>5. Mekanika Kuantum / Modern (Schrödinger & Heisenberg)</h3>
+                    <p><b>Awan Elektron (Orbital):</b> Kedudukan elektron tidak dapat dipastikan secara pasti (Prinsip Ketidakpastian Heisenberg), melainkan hanya berupa peluang/kebolehhitungan terbesar menemukan elektron yang disebut <b>Orbital</b>.</p>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>3. Penemuan Partikel Subatom</h2>
+            </div>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Elektron (e⁻)</h3>
+                    <ul>
+                        <li><b>Penemu:</b> J.J. Thomson (1897)</li>
+                        <li><b>Percobaan:</b> Tabung Sinar Katode (Cathode Ray Tube)</li>
+                        <li><b>Muatan:</b> Negatif (-1)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Proton (p⁺)</h3>
+                    <ul>
+                        <li><b>Penemu:</b> Eugen Goldstein (1886) & Ernest Rutherford (1919)</li>
+                        <li><b>Percobaan:</b> Tabung Sinar Terusan / Anode</li>
+                        <li><b>Muatan:</b> Positif (+1)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Neutron (n⁰)</h3>
+                    <ul>
+                        <li><b>Penemu:</b> James Chadwick (1932)</li>
+                        <li><b>Percobaan:</b> Penembakan partikel alfa pada inti Berilium</li>
+                        <li><b>Muatan:</b> Netral (0)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>4. Hubungan Atom, Energi, dan Gelombang</h2>
+            </div>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Eksitasi & Emisi Energi</h3>
+                    <p>Elektron dapat berpindah kulit. Jika berpindah ke kulit lebih luar, elektron <b>menyerap energi</b> (eksitasi). Jika kembali ke kulit lebih dalam, elektron <b>memancarkan energi</b> dalam bentuk gelombang cahaya (foton).</p>
+                </div>
+                <div class="card">
+                    <h3>Persamaan Energi Foton</h3>
+                    <p>Besar energi yang dipancarkan/diserap sebanding dengan frekuensi gelombang cahaya:</p>
+                    <p style="text-align:center; font-weight:bold; font-size:16px;">E = h × f = (h × c) / λ</p>
+                    <p style="font-size:12px; color:#555;">(E = Energi, h = Konstanta Planck, f = Frekuensi, c = Kecepatan Cahaya, λ = Panjang Gelombang)</p>
+                </div>
+                <div class="card">
+                    <h3>Dualisme Gelombang-Partikel</h3>
+                    <p>Dikemukakan oleh Louis de Broglie: Materi berskala mikroskopis seperti elektron memiliki sifat ganda, yaitu dapat berperilaku sebagai <b>partikel</b> sekaligus sebagai <b>gelombang</b>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="kuis" class="section">
+            <div class="quiz-container" id="quiz-box">
+                <div id="progress" style="margin-bottom: 12px; font-weight: bold; color: var(--primary);">Soal 1 dari 6</div>
+                <div class="question-text" id="question">Memuat soal...</div>
+                
+                <div id="options-container"></div>
+
+                <div id="feedback" class="feedback-box"></div>
+                <button id="btn-next" class="btn-next" onclick="nextQuestion()">Soal Selanjutnya ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.target.classList.add('active');
+        }
+
+        const quizData = [
+            {
+                question: "1. Kelemahan utama model atom John Dalton yang kemudian diperbaiki oleh J.J. Thomson adalah...",
+                options: {
+                    A: "Dalton menganggap atom berbentuk bola pejal padahal atom terdiri dari partikel subatom",
+                    B: "Dalton menyatakan elektron berputar mengelilingi inti atom",
+                    C: "Dalton tidak dapat menjelaskan keberadaan lintasan elektron",
+                    D: "Dalton menyebutkan bahwa sebagian besar volume atom adalah ruang hampa"
+                },
+                answer: "A",
+                explanation: "John Dalton menganggap atom tidak dapat dibagi lagi. Percobaan tabung sinar katode oleh J.J. Thomson membuktikan adanya partikel yang lebih kecil bermuatan negatif (elektron) di dalam atom."
+            },
+            {
+                question: "2. Eksperimen penembakan lempeng emas tipis dengan partikel alfa yang dilakukan oleh Ernest Rutherford membuktikan bahwa...",
+                options: {
+                    A: "Elektron bergerak dalam lintasan stasioner",
+                    B: "Massa atom terpusat pada inti atom bermuatan positif dan sebagian besar atom adalah ruang hampa",
+                    C: "Muatan negatif tersebar merata di seluruh permukaan atom",
+                    D: "Neutron berada di luar inti atom"
+                },
+                answer: "B",
+                explanation: "Sebagian besar partikel alfa diteruskan (membuktikan ruang hampa) dan sebagian kecil dipantulkan/dibelokkan (membuktikan adanya inti atom yang sangat kecil dan bermuatan positif)."
+            },
+            {
+                question: "3. Partikel subatom bermuatan netral yang terdapat di dalam inti atom ditemukan oleh James Chadwick melalui percobaan penembakan sinar alfa pada inti...",
+                options: {
+                    A: "Emas (Au)",
+                    B: "Tembaga (Cu)",
+                    C: "Berilium (Be)",
+                    D: "Hidrogen (H)"
+                },
+                answer: "C",
+                explanation: "James Chadwick pada tahun 1932 menemukan neutron dengan cara menembakkan partikel alfa ke lempeng Berilium (Be), yang menghasilkan radiasi partikel netral berukuran relatif sebanding dengan proton."
+            },
+            {
+                question: "4. Menurut Niels Bohr, apabila elektron berpindah dari kulit luar (tingkat energi tinggi) ke kulit yang lebih dalam (tingkat energi rendah), maka atom akan...",
+                options: {
+                    A: "Menyerap energi dalam bentuk gelombang cahaya",
+                    B: "Memancarkan energi dalam bentuk foton/gelombang elektromagnetik",
+                    C: "Mengalami pertambahan jumlah elektron",
+                    D: "Berubah menjadi atom netral"
+                },
+                answer: "B",
+                explanation: "Perpindahan elektron dari tingkat energi tinggi ke tingkat energi rendah melepas kelebihan energi berupa pancaran foton (emisi gelombang elektromagnetik)."
+            },
+            {
+                question: "5. Pernyataan yang tepat mengenai hubungan antara energi, frekuensi, dan panjang gelombang foton yang dipancarkan oleh atom adalah...",
+                options: {
+                    A: "Makin panjang gelombangnya, makin besar energi fotonnya",
+                    B: "Makin tinggi frekuensinya, makin pendek panjang gelombangnya dan makin besar energinya",
+                    C: "Frekuensi tidak mempengaruhi besarnya energi foton",
+                    D: "Energi foton berbanding terbalik dengan frekuensi gelombangnya"
+                },
+                answer: "B",
+                explanation: "Sesuai rumus E = h x f = (h x c) / λ, energi foton berbanding lurus dengan frekuensi (f) dan berbanding terbalik dengan panjang gelombang (λ)."
+            },
+            {
+                question: "6. Kedudukan elektron dalam atom modern tidak dapat ditentukan secara pasti, melainkan hanya berupa peluang kebolehhitungan terbesar menemukan elektron. Prinsip dasar ini dikenal sebagai...",
+                options: {
+                    A: "Hukum Kekekalan Massa",
+                    B: "Efek Fotolistrik Einstein",
+                    C: "Prinsip Ketidakpastian Heisenberg",
+                    D: "Prinsip Larangan Pauli"
+                },
+                answer: "C",
+                explanation: "Werner Heisenberg mengemukakan Prinsip Ketidakpastian, di mana posisi dan momentum elektron tidak dapat diukur secara pasti bersamaan. Daerah kebolehjadian menemukan elektron dinamakan orbital."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQ];
+            document.getElementById('progress').innerText = `Soal ${currentQ + 1} dari ${quizData.length}`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = "";
+            
+            for(const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${key}. ${value}`;
+                btn.onclick = () => checkAnswer(key, btn);
+                optionsBox.appendChild(btn);
+            }
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedKey, btnClicked) {
+            const q = quizData[currentQ];
+            const feedbackBox = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selectedKey === q.answer) {
+                btnClicked.classList.add('correct');
+                feedbackBox.style.background = '#dcfce7';
+                feedbackBox.style.color = '#14532d';
+                feedbackBox.style.border = '1px solid #86efac';
+                feedbackBox.innerHTML = `<strong>✅ Tepat Sekali!</strong><br>Pembahasan: ${q.explanation}`;
+                score += 100 / quizData.length;
+            } else {
+                btnClicked.classList.add('wrong');
+                feedbackBox.style.background = '#fee2e2';
+                feedbackBox.style.color = '#7f1d1d';
+                feedbackBox.style.border = '1px solid #fca5a5';
+                feedbackBox.innerHTML = `<strong>❌ Jawaban Kurang Tepat. Jawaban Benar: ${q.answer}</strong><br>Pembahasan: ${q.explanation}`;
+                
+                allBtns.forEach(b => {
+                    if(b.innerText.startsWith(q.answer)) b.classList.add('correct');
+                });
+            }
+
+            feedbackBox.style.display = 'block';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const quizBox = document.getElementById('quiz-box');
+            const finalScore = Math.round(score);
+            let message = finalScore >= 80 ? "Hebat! Kamu telah menguasai konsep Struktur Atom! ⚛️" : "Tetap Semangat! Pelajari kembali rangkuman materi di atas ya. 📚";
+            
+            quizBox.innerHTML = `
+                <div class="score-board">
+                    <h3>Kuis Selesai!</h3>
+                    <p>${message}</p>
+                    <h2>Nilai Kamu: ${finalScore} / 100</h2>
+                    <button class="tab-btn" style="margin-top:20px" onclick="location.reload()">Ulangi Kuis</button>
+                </div>
+            `;
+        }
+
+        // Jalankan kuis saat awal dimuat
+        loadQuestion();
+    </script>
+
+<a href="index.html" class="module-card">
+   <div class="card-body">
+      <h3 class="module-title">Kembali</h3>
+   </div>
+</a>
+</body>
+</html>

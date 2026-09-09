@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Kimia Hijau</title>
+    <style>
+        :root {
+            --primary: #27ae60;
+            --primary-dark: #219653;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #f4f9f5;
+            --white: #ffffff;
+            --danger: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 24px; }
+        p.subtitle { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Navigasi Tab */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Desain Materi (Grid 12 Prinsip) */
+        .grid-prinsip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { margin-top: 0; color: var(--primary-dark); font-size: 16px; }
+
+        /* Desain Kuis */
+        .quiz-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .question-text { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--light);
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .option-btn:hover { background: #e2ece5; border-color: var(--primary); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .correct { background: #d4edda !important; border-color: #28a745 !important; color: #155724; }
+        .wrong { background: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+        }
+
+        .btn-next:hover { background: var(--primary-dark); }
+
+        .score-board {
+            text-align: center;
+            padding: 40px;
+        }
+        .score-board h2 { font-size: 36px; color: var(--primary); margin: 0; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌿 ChemX-plore: Kimia Hijau</h1>
+        <p class="subtitle">Fase E - Solusi untuk Masa Depan Bumi yang Berkelanjutan</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigasi -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('materi')">📖 Rangkuman Materi</button>
+            <button class="tab-btn" onclick="switchTab('kuis')">📝 Kuis Interaktif</button>
+        </div>
+
+        <!-- Bagian Materi -->
+        <div id="materi" class="section active">
+            <h2 style="text-align: center;">12 Prinsip Kimia Hijau</h2>
+            <div class="grid-prinsip">
+                <div class="card"><h3>1. Cegah Limbah</h3><p>Lebih baik mencegah daripada mengolah limbah setelah terbentuk.</p></div>
+                <div class="card"><h3>2. Ekonomi Atom</h3><p>Maksimalkan bahan baku yang masuk menjadi produk akhir.</p></div>
+                <div class="card"><h3>3. Sintesis Aman</h3><p>Gunakan dan hasilkan zat yang tidak beracun.</p></div>
+                <div class="card"><h3>4. Desain Aman</h3><p>Rancang produk kimia yang efektif namun aman bagi manusia.</p></div>
+                <div class="card"><h3>5. Pelarut Aman</h3><p>Kurangi pelarut organik berbahaya, gunakan air jika mungkin.</p></div>
+                <div class="card"><h3>6. Efisiensi Energi</h3><p>Lakukan reaksi pada suhu & tekanan ruang untuk hemat energi.</p></div>
+                <div class="card"><h3>7. Bahan Terbarukan</h3><p>Gunakan bahan baku dari alam yang bisa diperbarui (biomassa).</p></div>
+                <div class="card"><h3>8. Kurangi Turunan</h3><p>Hindari tahapan reaksi pelindung sementara yang memboroskan.</p></div>
+                <div class="card"><h3>9. Gunakan Katalis</h3><p>Katalis mempercepat reaksi dan bisa dipakai berulang kali.</p></div>
+                <div class="card"><h3>10. Desain Degradasi</h3><p>Produk harus bisa terurai aman di alam (contoh: bioplastik).</p></div>
+                <div class="card"><h3>11. Analisis Real-Time</h3><p>Pantau reaksi secara langsung untuk cegah polusi.</p></div>
+                <div class="card"><h3>12. Cegah Kecelakaan</h3><p>Pilih bahan yang minimalkan risiko ledakan/kebakaran.</p></div>
+            </div>
+        </div>
+
+        <!-- Bagian Kuis -->
+        <div id="kuis" class="section">
+            <div class="quiz-container" id="quiz-box">
+                <div id="progress" style="margin-bottom: 10px; font-weight: bold; color: var(--primary);">Soal 1 dari 5</div>
+                <div class="question-text" id="question">Memuat soal...</div>
+                
+                <div id="options-container">
+                    <!-- Tombol opsi akan dibuat oleh JavaScript -->
+                </div>
+
+                <div id="feedback" class="feedback-box"></div>
+                <button id="btn-next" class="btn-next" onclick="nextQuestion()">Soal Selanjutnya ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logika Perpindahan Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Database Soal Kuis (Saya masukkan 5 soal perwakilan, Anda bisa menambahkannya hingga 20)
+        const quizData = [
+            {
+                question: "Pengertian paling tepat dari Kimia Hijau (Green Chemistry) adalah...",
+                options: {
+                    A: "Cabang ilmu kimia yang mempelajari tumbuhan hijau",
+                    B: "Pendekatan merancang proses kimia yang mengurangi zat berbahaya",
+                    C: "Proses pengolahan limbah kimia setelah dibuang",
+                    D: "Penggunaan bahan kimia beracun secara efisien"
+                },
+                answer: "B",
+                explanation: "Kimia hijau berfokus pada pencegahan polusi dari sumbernya dengan merancang proses dan produk yang minim zat berbahaya."
+            },
+            {
+                question: "Mengapa penggunaan katalis sangat dianjurkan dalam prinsip Kimia Hijau?",
+                options: {
+                    A: "Karena katalis meningkatkan jumlah limbah padat",
+                    B: "Karena katalis memperlambat reaksi agar aman",
+                    C: "Karena katalis ikut bereaksi dan habis menjadi produk",
+                    D: "Karena katalis mempercepat reaksi dan dapat digunakan berulang"
+                },
+                answer: "D",
+                explanation: "Katalis menurunkan energi aktivasi, mempercepat reaksi, dan tidak habis bereaksi, sehingga sangat efisien bahan (Prinsip 9)."
+            },
+            {
+                question: "Tindakan mana yang sesuai dengan prinsip 'Desain untuk Degradasi'?",
+                options: {
+                    A: "Membuat botol kaca yang sangat tebal",
+                    B: "Memproduksi plastik PET yang tahan 500 tahun",
+                    C: "Mengembangkan bioplastik dari pati singkong yang hancur di tanah",
+                    D: "Menggunakan kaleng aluminium anti karat"
+                },
+                answer: "C",
+                explanation: "Produk yang didesain untuk degradasi harus bisa terurai dengan aman di lingkungan setelah masa pakainya habis (Prinsip 10)."
+            },
+            {
+                question: "Suatu pabrik mengganti pelarut benzena yang karsinogenik dengan air. Hal ini sesuai dengan prinsip keberapa?",
+                options: {
+                    A: "Prinsip 1 (Pencegahan Limbah)",
+                    B: "Prinsip 5 (Pelarut dan Bahan Pembantu Aman)",
+                    C: "Prinsip 7 (Bahan Baku Terbarukan)",
+                    D: "Prinsip 10 (Desain untuk Degradasi)"
+                },
+                answer: "B",
+                explanation: "Air adalah pelarut yang jauh lebih aman bagi pekerja dan lingkungan dibandingkan senyawa organik karsinogenik seperti benzena."
+            },
+            {
+                question: "Langkah paling tepat yang bisa dilakukan siswa untuk menerapkan prinsip kimia hijau sehari-hari adalah...",
+                options: {
+                    A: "Membuang baterai bekas ke tempat sampah organik",
+                    B: "Membakar sampah plastik di halaman",
+                    C: "Mencampur berbagai pembersih lantai agar lebih kuat",
+                    D: "Menggunakan botol minum ulang (tumbler) dan sabun ramah lingkungan"
+                },
+                answer: "D",
+                explanation: "Mencegah limbah wadah sekali pakai dengan tumbler dan memilih bahan aman adalah aplikasi nyata prinsip 1 dan 4 di kehidupan siswa."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQ];
+            document.getElementById('progress').innerText = `Soal ${currentQ + 1} dari ${quizData.length}`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = "";
+            
+            // Generate Buttons
+            for(const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${key}. ${value}`;
+                btn.onclick = () => checkAnswer(key, btn);
+                optionsBox.appendChild(btn);
+            }
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedKey, btnClicked) {
+            const q = quizData[currentQ];
+            const feedbackBox = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            // Matikan semua tombol agar tidak bisa diklik dua kali
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selectedKey === q.answer) {
+                btnClicked.classList.add('correct');
+                feedbackBox.style.background = '#d4edda';
+                feedbackBox.style.color = '#155724';
+                feedbackBox.style.border = '1px solid #c3e6cb';
+                feedbackBox.innerHTML = `<strong>✅ Benar!</strong> <br> Pembahasan: ${q.explanation}`;
+                score += 20; // Nilai tiap soal (karena 5 soal, total 100)
+            } else {
+                btnClicked.classList.add('wrong');
+                feedbackBox.style.background = '#f8d7da';
+                feedbackBox.style.color = '#721c24';
+                feedbackBox.style.border = '1px solid #f5c6cb';
+                feedbackBox.innerHTML = `<strong>❌ Salah. Jawaban yang tepat: ${q.answer}</strong> <br> Pembahasan: ${q.explanation}`;
+                
+                // Warnai jawaban yang benar
+                allBtns.forEach(b => {
+                    if(b.innerText.startsWith(q.answer)) b.classList.add('correct');
+                });
+            }
+
+            feedbackBox.style.display = 'block';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const quizBox = document.getElementById('quiz-box');
+            let message = score >= 80 ? "Luar Biasa, Alkemis Hijau! 🌿" : "Tetap Semangat Belajar! 📚";
+            quizBox.innerHTML = `
+                <div class="score-board">
+                    <h3>Kuis Selesai!</h3>
+                    <p>${message}</p>
+                    <h2>Nilai Kamu: ${score}</h2>
+                    <button class="tab-btn" style="margin-top:20px" onclick="location.reload()">Ulangi Kuis</button>
+                </div>
+            `;
+        }
+
+        // Mulai kuis saat halaman dimuat
+        loadQuestion();
+    </script>
+
+<a href="index.html" class="module-card">
+   <div class="card-body">
+      <h3 class="module-title">Kembali</h3>
+   </div>
+</a>
+
+</body>
+</html>

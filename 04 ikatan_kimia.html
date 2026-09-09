@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Interaktif: Ikatan Kimia & Ikatan Logam</title>
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --secondary: #0284c7;
+            --accent: #14b8a6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        h1 { margin: 0; font-size: 26px; }
+        p.subtitle { margin: 6px 0 0 0; font-size: 14px; opacity: 0.9; }
+
+        .container {
+            max-width: 950px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        /* Navigasi Tab */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-header {
+            text-align: center;
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+        }
+
+        /* Desain Kartu Materi */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-4px); }
+        .card h3 { margin-top: 0; color: var(--primary); font-size: 17px; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
+        .card p, .card ul { font-size: 14.5px; }
+        .card ul { padding-left: 18px; margin: 8px 0; }
+        .card li { margin-bottom: 6px; }
+
+        .highlight-box {
+            background-color: #ccfbf1;
+            border-left: 4px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Desain Kuis */
+        .quiz-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .question-text { font-size: 17px; font-weight: bold; margin-bottom: 20px; color: var(--dark); }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--light);
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14.5px;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .option-btn:hover { background: #e2e8f0; border-color: var(--secondary); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .correct { background: #dcfce7 !important; border-color: #22c55e !important; color: #14532d !important; font-weight: bold; }
+        .wrong { background: #fee2e2 !important; border-color: #ef4444 !important; color: #7f1d1d !important; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+        }
+
+        .btn-next:hover { background: var(--primary-dark); }
+
+        .score-board {
+            text-align: center;
+            padding: 30px;
+        }
+        .score-board h2 { font-size: 40px; color: var(--secondary); margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🔗 ChemX-plore: Ikatan Antar Atom</h1>
+        <p class="subtitle">Materi Kimia Kelas X SMA — Ikatan Ion, Kovalen, dan Ikatan Logam</p>
+    </header>
+
+    <div class="container">
+        <!-- Navigasi Tab -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('materi', event)">📖 Rangkuman Materi</button>
+            <button class="tab-btn" onclick="switchTab('kuis', event)">📝 Kuis Interaktif (5 Soal)</button>
+        </div>
+
+        <!-- BAGIAN MATERI -->
+        <div id="materi" class="section active">
+            <div class="section-header">
+                <h2>1. Konsep Dasar Ikatan Kimia</h2>
+                <p>Mengapa atom-atom saling berikatan?</p>
+            </div>
+            
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Kestabilan Atom & Gas Mulia</h3>
+                    <p>Atom-atom di alam sebagian besar tidak stabil secara mandiri. Atom saling berikatan untuk mencapai konfigurasi elektron yang stabil seperti **Gas Mulia (Golongan VIII A)**.</p>
+                </div>
+                <div class="card">
+                    <h3>Aturan Kestabilan</h3>
+                    <div class="highlight-box">Kaidah Oktet & Duplet</div>
+                    <ul>
+                        <li><b>Kaidah Oktet:</b> Kecenderungan atom memiliki 8 elektron pada kulit terluar (contoh: Ne, Ar, Kr).</li>
+                        <li><b>Kaidah Duplet:</b> Kecenderungan atom memiliki 2 elektron pada kulit terluar (khusus unsur dekat Helium seperti H, Li, Be).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>2. Jenis-Jenis Ikatan Utama</h2>
+                <p>Tiga mekanisme utama pembentukan ikatan antar atom</p>
+            </div>
+
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>1. Ikatan Ion (Elektrovalen)</h3>
+                    <p>Ikatan yang terbentuk akibat <b>serah terima elektron</b> antara atom logam dan non-logam karena perbedaan keelektronegatifan yang besar.</p>
+                    <ul>
+                        <li><b>Atom Logam:</b> Melepas elektron → Kation (+)</li>
+                        <li><b>Atom Non-Logam:</b> Menerima elektron → Anion (-)</li>
+                        <li><b>Gaya Tarik:</b> Gaya Elektrostatik</li>
+                        <li><b>Contoh:</b> NaCl, MgCl<sub>2</sub>, CaO, KBr</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>2. Ikatan Kovalen</h3>
+                    <p>Ikatan yang terbentuk akibat <b>pemakaian bersama pasangan elektron</b> antara sesama atom non-logam.</p>
+                    <ul>
+                        <li><b>Kovalen Tunggal:</b> Pemakaian 1 pasang e<sup>-</sup> (Contoh: H<sub>2</sub>O, HCl, CH<sub>4</sub>)</li>
+                        <li><b>Kovalen Rangkap 2:</b> Pemakaian 2 pasang e<sup>-</sup> (Contoh: O<sub>2</sub>, CO<sub>2</sub>)</li>
+                        <li><b>Kovalen Rangkap 3:</b> Pemakaian 3 pasang e<sup>-</sup> (Contoh: N<sub>2</sub>)</li>
+                        <li><b>Kovalen Koordinasi:</b> Pasangan elektron bersama hanya berasal dari <i>salah satu</i> atom (Contoh: NH<sub>4</sub><sup>+</sup>, H<sub>3</sub>O<sup>+</sup>)</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="grid-column: span 1 / -1;">
+                    <h3>Polaritas Ikatan Kovalen</h3>
+                    <ul>
+                        <li><b>Kovalen Polar:</b> Pasangan elektron tertarik lebih kuat ke salah satu atom karena ada beda keelektronegatifan. Memiliki Pasangan Elektron Bebas (PEB) pada atom pusat dan bentuknya asimetris (Contoh: H<sub>2</sub>O, NH<sub>3</sub>).</li>
+                        <li><b>Kovalen Non-Polar:</b> Pasangan elektron terbagi merata. Tidak ada PEB pada atom pusat dan bentuknya simetris (Contoh: CH<sub>4</sub>, O<sub>2</sub>, H<sub>2</sub>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>3. Ikatan Logam (Teori Lautan Elektron)</h2>
+                <p>Mekanisme ikatan khusus antar atom-atom unsur logam</p>
+            </div>
+
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Model Lautan Elektron</h3>
+                    <p>Dikembangkan oleh Drude dan Lorentz. Dalam kristal logam, atom-atom melepas elektron valensinya menjadi kation (+) yang teratur kaku, sementara elektron-elektronnya bebas bergerak (terdelokalisasi) mengelilingi kation seperti <b>"Lautan Elektron"</b>.</p>
+                </div>
+                <div class="card">
+                    <h3>Sifat-Sifat Khas Logam</h3>
+                    <ul>
+                        <li><b>Konduktor Listrik & Panas:</b> Akibat elektron valensi bebas bergerak mengalirkan muatan dan energi kinetik.</li>
+                        <li><b>Dapat Ditempa / Ditarik:</b> Saat ditempa, lapisan kation bergeser tanpa pecah karena tetap diikat oleh lautan elektron.</li>
+                        <li><b>Mengilap:</b> Elektron bebas menyerap dan memantulkan kembali gelombang cahaya yang menimpanya.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- BAGIAN KUIS -->
+        <div id="kuis" class="section">
+            <div class="quiz-container" id="quiz-box">
+                <div id="progress" style="margin-bottom: 12px; font-weight: bold; color: var(--primary);">Soal 1 dari 5</div>
+                <div class="question-text" id="question">Memuat soal...</div>
+                
+                <div id="options-container"></div>
+
+                <div id="feedback" class="feedback-box"></div>
+                <button id="btn-next" class="btn-next" onclick="nextQuestion()">Soal Selanjutnya ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.target.classList.add('active');
+        }
+
+        const quizData = [
+            {
+                question: "1. Mengapa atom-atom unsur non-gas mulia cenderung membentuk ikatan kimia di alam?",
+                options: {
+                    A: "Untuk menambah jumlah kulit elektronnya",
+                    B: "Mencapai konfigurasi elektron yang stabil seperti gas mulia",
+                    C: "Meningkatkan energi potensial agar lebih reaktif",
+                    D: "Mengubah nomor atom menjadi lebih besar"
+                },
+                answer: "B",
+                explanation: "Atom-atom membentuk ikatan kimia agar mencapai konfigurasi elektron stabil (memenuhi aturan oktet yaitu 8 elektron valensi atau duplet yaitu 2 elektron valensi) seperti unsur Gas Mulia."
+            },
+            {
+                question: "2. Pasangan senyawa berikut yang keduanya tergolong senyawa berikatan ion adalah...",
+                options: {
+                    A: "HCl dan H₂O",
+                    B: "NaCl dan KBr",
+                    C: "CH₄ dan CO₂",
+                    D: "NH₃ dan Cl₂"
+                },
+                answer: "B",
+                explanation: "NaCl (Na=logam, Cl=non-logam) dan KBr (K=logam, Br=non-logam) terbentuk melalui serah terima elektron (ikatan ion). Sedangkan opsi A, C, dan D hanya mengandung unsur-unsur non-logam (ikatan kovalen)."
+            },
+            {
+                question: "3. Syarat utama terjadinya ikatan kovalen koordinasi antar dua atom adalah...",
+                options: {
+                    A: "Terjadi serah terima elektron dari atom logam ke non-logam",
+                    B: "Pemakaian bersama pasangan elektron yang hanya berasal dari salah satu atom",
+                    C: "Adanya pembentukan lautan elektron yang bebas bergerak",
+                    D: "Gaya tarik elektrostatik antar kation dan anion"
+                },
+                answer: "B",
+                explanation: "Ikatan kovalen koordinasi adalah ikatan kovalen khusus di mana pasangan elektron yang digunakan bersama hanya disumbangkan oleh salah satu atom, sedangkan atom lainnya tidak menyumbang elektron."
+            },
+            {
+                question: "4. Sifat logam yang dapat ditempa (tidak hancur saat dipukul) dapat dijelaskan oleh teori ikatan logam karena...",
+                options: {
+                    A: "Pasangan elektron kovalen terikat kaku pada satu inti atom",
+                    B: "Adanya serah terima elektron secara permanen antar atom",
+                    C: "Lapisan kation logam dapat bergeser tanpa putus ikatan karena tetap diikat oleh lautan elektron yang fleksibel",
+                    D: "Logam tidak memiliki elektron valensi pada kulit terluarnya"
+                },
+                answer: "C",
+                explanation: "Menurut teori Lautan Elektron, ketika logam ditempa, kation bermuatan positif bergeser tempat. Namun, ikatan tidak putus karena 'lautan elektron' yang bermuatan negatif terus fleksibel mengikat kation-kation tersebut."
+            },
+            {
+                question: "5. Molekul air (H₂O) bersifat kovalen polar, sedangkan metana (CH₄) bersifat kovalen non-polar. Penyebab utama sifat polar pada molekul H₂O adalah...",
+                options: {
+                    A: "Memiliki Pasangan Elektron Bebas (PEB) pada atom pusat (O) sehingga bentuk molekul asimetris",
+                    B: "Terbentuk dari unsur logam dan non-logam",
+                    C: "Memiliki ikatan kovalen koordinasi di dalamnya",
+                    D: "Mempunyai beda keelektronegatifan nol antar atom penyusunnya"
+                },
+                answer: "A",
+                explanation: "Atom pusat O pada molekul H₂O memiliki 2 pasang elektron bebas (PEB) yang menyebabkan dorongan geometri molekul menjadi bengkok (asimetris) dan menciptakan kutub muatan (dipol/polar)."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQ];
+            document.getElementById('progress').innerText = `Soal ${currentQ + 1} dari ${quizData.length}`;
+            document.getElementById('question').innerText = q.question;
+            
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = "";
+            
+            for(const [key, value] of Object.entries(q.options)) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${key}. ${value}`;
+                btn.onclick = () => checkAnswer(key, btn);
+                optionsBox.appendChild(btn);
+            }
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+        }
+
+        function checkAnswer(selectedKey, btnClicked) {
+            const q = quizData[currentQ];
+            const feedbackBox = document.getElementById('feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selectedKey === q.answer) {
+                btnClicked.classList.add('correct');
+                feedbackBox.style.background = '#dcfce7';
+                feedbackBox.style.color = '#14532d';
+                feedbackBox.style.border = '1px solid #86efac';
+                feedbackBox.innerHTML = `<strong>✅ Tepat Sekali!</strong><br>Pembahasan: ${q.explanation}`;
+                score += 100 / quizData.length;
+            } else {
+                btnClicked.classList.add('wrong');
+                feedbackBox.style.background = '#fee2e2';
+                feedbackBox.style.color = '#7f1d1d';
+                feedbackBox.style.border = '1px solid #fca5a5';
+                feedbackBox.innerHTML = `<strong>❌ Jawaban Kurang Tepat. Jawaban Benar: ${q.answer}</strong><br>Pembahasan: ${q.explanation}`;
+                
+                allBtns.forEach(b => {
+                    if(b.innerText.startsWith(q.answer)) b.classList.add('correct');
+                });
+            }
+
+            feedbackBox.style.display = 'block';
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const quizBox = document.getElementById('quiz-box');
+            const finalScore = Math.round(score);
+            let message = finalScore >= 80 ? "Luar Biasa! Kamu memahami konsep Ikatan Kimia & Ikatan Logam dengan sangat baik! 🔗" : "Tetap Semangat! Pelajari lagi rangkuman materi di atas ya. 📚";
+            
+            quizBox.innerHTML = `
+                <div class="score-board">
+                    <h3>Kuis Selesai!</h3>
+                    <p>${message}</p>
+                    <h2>Nilai Kamu: ${finalScore} / 100</h2>
+                    <button class="tab-btn" style="margin-top:20px" onclick="location.reload()">Ulangi Kuis</button>
+                </div>
+            `;
+        }
+
+        // Jalankan kuis saat awal dimuat
+        loadQuestion();
+    </script>
+
+<a href="index.html" class="module-card">
+   <div class="card-body">
+      <h3 class="module-title">Kembali</h3>
+   </div>
+</a>
+</body>
+</html>
